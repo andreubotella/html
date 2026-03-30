@@ -3349,6 +3349,7 @@ a.setAttribute('href', 'https://example.com/'); // change the content attribute 
      <li>The <!--en-GB--><dfn id="activation-behaviour" data-x-href="https://dom.spec.whatwg.org/#eventtarget-activation-behavior">activation behavior</dfn> hook</li>
      <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior</dfn> hook</li>
      <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior</dfn> hook</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org#eventtarget-preserved-asynccontext-map">preserved AsyncContext map</dfn> concept for event targets</li>
      <li>The <dfn data-x="creating an event" data-x-href="https://dom.spec.whatwg.org/#concept-event-create">create an event</dfn> algorithm</li>
      <li>The <dfn data-x="concept-event-fire" data-x-href="https://dom.spec.whatwg.org/#concept-event-fire">fire an event</dfn> algorithm</li>
      <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#canceled-flag">canceled flag</dfn></li>
@@ -3422,6 +3423,10 @@ a.setAttribute('href', 'https://example.com/'); // change the content attribute 
      <li><dfn data-x-href="https://dom.spec.whatwg.org/#valid-attribute-local-name">valid attribute local name</dfn></li>
      <li><dfn data-x-href="https://dom.spec.whatwg.org/#valid-element-local-name">valid element local name</dfn></li>
      <li><dfn data-x-href="https://dom.spec.whatwg.org/#is-a-global-custom-element-registry">is a global custom element registry</dfn></li>
+
+     <li>The <dfn data-x="PropagatesAsyncContextToEvents" data-x-href="https://dom.spec.whatwg.org/#extendedattrdef-propagatesasynccontexttoevents"><code>[PropagatesAsyncContextToEvents]</code></dfn> extended attribute</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-propagate-asynccontext-for-events">propagate AsyncContext for events</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-clear-asynccontext-for-events">clear AsyncContext for events</dfn> algorithm</li>
     </ul>
 
     <p>The following features are defined in <cite>UI Events</cite>: <ref>UIEVENTS</ref></p>
@@ -5151,6 +5156,16 @@ a.setAttribute('href', 'https://example.com/'); // change the content attribute 
 
 
   <h4>Interactions with AsyncContext</h4>
+
+  <p algorithm>To <dfn for="EventTarget" export>propagate AsyncContext for load events</dfn> given
+  <var>target</var>, <span>propagate AsyncContext for events</span>
+  «<code data-x="event-load">load</code>, <code data-x="event-error">error</code>» given
+  <var>target</var>.</p>
+
+  <p algorithm>To <dfn for="EventTarget" export>clear AsyncContext for load events</dfn> given
+  <var>target</var>, <span>clear AsyncContext for events</span>
+  «<code data-x="event-load">load</code>, <code data-x="event-error">error</code>» given
+  <var>target</var>.</p>
 
   <div algorithm>
   <p>To <dfn for="Async Context Mapping" export data-x="Async Context Mapping run">run</dfn> an
@@ -18724,6 +18739,8 @@ console.log(style.disabled); // false</code></pre>
   <ol>
    <li><p>Let <var>element</var> be the <code>style</code> element.</p></li>
 
+   <li><p><span>Propagate AsyncContext for load events</span> given <var>element</var>.</p></li>
+
    <li><p>If <var>element</var> has an <span>associated CSS style sheet</span>, <span
    data-x="remove a CSS style sheet">remove the CSS style sheet</span> in question.</p></li>
 
@@ -28425,6 +28442,8 @@ document.body.appendChild(wbr);</code></pre>
   <var>el</var>, is as follows:</p>
 
   <ol>
+   <li><p><span>Propagate AsyncContext for load events</span> given <var>el</var>.</p></li>
+
    <li><p>If <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value is the
    empty string, then return.</p></li>
 
@@ -28800,6 +28819,8 @@ document.body.appendChild(wbr);</code></pre>
   <var>el</var>, is as follows:</p>
 
   <ol>
+   <li><p><span>Propagate AsyncContext for load events</span> given <var>el</var>.</p></li>
+
    <li><p>If <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value is the
    empty string, then return.</p></li>
 
@@ -29198,6 +29219,8 @@ document.body.appendChild(wbr);</code></pre>
   given a <code>link</code> element <var>el</var>, are:</p>
 
   <ol>
+   <li><p><span>Propagate AsyncContext for load events</span> given <var>el</var>.</p></li>
+
    <li><p><span>Update the source set</span> for <var>el</var>.</p></li>
 
    <li><p>Let <var>options</var> be the result of <span
@@ -29351,6 +29374,18 @@ document.body.appendChild(wbr);</code></pre>
   <span>same origin</span> as the <span>URL</span> of the external resource<!-- CVE-2010-0654 -->,
   and the <span data-x="Content-Type">Content-Type metadata</span> of the external resource is not a
   supported style sheet type, the user agent must instead assume it to be <code>text/css</code>.</p>
+
+  <div algorithm>
+  <p>The <span>fetch and process the linked resource</span> steps for this type of linked resource,
+  given a <code>link</code> element <var>el</var>, are:</p>
+
+  <ol>
+   <li><p><span>Propagate AsyncContext for load events</span> given <var>el</var>.</p></li>
+
+   <li><p>Run the <span>default fetch and process the linked resource</span> steps given
+   <var>el</var>.</p></li>
+  </ol>
+  </div>
 
   <div algorithm>
   <p>The <span>linked resource fetch setup steps</span> for this type of linked resource, given a
@@ -32452,6 +32487,8 @@ was an English &lt;a href="/wiki/Music_hall">music hall&lt;/a> singer, ...</code
   events</i> flag set, it must run the following steps:</p>
 
   <ol>
+   <li><p><span>Propagate AsyncContext for load events</span> given <var>element</var>.</p></li>
+
    <li>
     <p>If the element's <span>node document</span> is not <span>fully active</span>, then:</p>
 
@@ -34881,6 +34918,9 @@ interface <dfn interface>HTMLIFrameElement</dfn> : <span>HTMLElement</span> {
   data-x="process-iframe-initial-insertion"><var>initialInsertion</var></dfn> (default false):</p>
 
   <ol>
+   <li><p><span>Propagate AsyncContext for events</span> «<code data-x="event-load">load</code>»
+   given <var>element</var>.</p></li>
+
    <li>
     <p>If <var>element</var>'s <code data-x="attr-iframe-srcdoc">srcdoc</code> attribute is
     specified, then:</p>
@@ -35699,8 +35739,16 @@ interface <dfn interface>HTMLEmbedElement</dfn> : <span>HTMLElement</span> {
   remaining <span data-x="concept-embed-active">potentially active</span> has its <code
   data-x="attr-embed-type">src</code> attribute set, changed, or removed or its <code
   data-x="attr-embed-type">type</code> attribute set, changed, or removed, the user agent must
-  <span>queue an element task</span> on the <dfn>embed task source</dfn> given the element
-  to run <span>the <code>embed</code> element setup steps</span> for that element.</p>
+  run the following steps, where <var>element</var> is the <code>embed</code> element:</p>
+
+  <ol>
+   <li><p><span>Propagate AsyncContext for events</span> «<code data-x="event-load">load</code>»
+   given <var>element</var>.</p></li>
+
+   <li><p><span>Queue an element task</span> on the <dfn>embed task source</dfn> given
+   <var>element</var> to run <span>the <code>embed</code> element setup steps</span> for
+   <var>element</var>.</p>
+  </ol>
   </div>
 
   <div algorithm>
@@ -35977,14 +36025,27 @@ interface <dfn interface>HTMLObjectElement</dfn> : <span>HTMLElement</span> {
    <li>the element changes from <span>being rendered</span> to not being rendered, or vice versa,
   </ul> <!-- Changing the base URL doesn't trigger this. -->
 
-  <p>...the user agent must <span>queue an element task</span> on the <span>DOM manipulation task
-  source</span> given the <code>object</code> element to run the following steps to (re)determine
-  what the <code>object</code> element represents. This <span data-x="concept-task">task</span>
-  being <span data-x="queue a task">queued</span> or actively running must <span>delay the load
-  event</span> of the element's <span>node document</span>. <!--As described in the algorithm, once
-  the algorithm starts fetching a resource, the fetch is what starts delaying the load event. But to
-  tide us over from when the parser finds the <object> element and the fetching begins, we have to
-  block the load event like this, lest the parse end before this task gets run.--></p>
+  <p>...the user agent must run the following steps:</p>
+
+  <ol>
+    <li><p><span>Propagate AsyncContext for load events</span> given the <code>object</code>
+    element.</p></li>
+
+    <li><p><span>Queue an element task</span> on the <span>DOM manipulation task source</span> given
+    <var>element</var> to <span data-x="determine what an object element represents">determine what
+    the <code>object</code> element represents</span>. This <span data-x="concept-task">task</span>
+    being <span data-x="queue a task">queued</span> or actively running must <span>delay the load
+    event</span> of the element's <span>node document</span>. <!--As described in the algorithm,
+    once the algorithm starts fetching a resource, the fetch is what starts delaying the load event.
+    But to tide us over from when the parser finds the <object> element and the fetching begins, we
+    have to block the load event like this, lest the parse end before this task gets run.-->
+    </p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>determine what an <code>object</code> element represents</dfn>, run the following
+  steps:</p>
 
   <ol>
    <li>
@@ -53451,6 +53512,9 @@ ldh-str       = &lt; as defined in <a href="https://www.rfc-editor.org/rfc/rfc10
   attribute's value is the empty string, run these steps:
 
   <ol>
+   <li><p><span>Propagate AsyncContext for load events</span> given the <code>input</code>
+   element.</p></li>
+
    <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given the <code
    data-x="attr-input-src">src</code> attribute's value, relative to the element's <span>node
    document</span>.</p></li>
@@ -128155,7 +128219,8 @@ source.addEventListener('remove', removeHandler, false);</code></pre>
 
   <h4>The <code>EventSource</code> interface</h4>
 
-  <pre><code class="idl">[Exposed=(Window,Worker)]
+  <pre><code class="idl">[Exposed=(Window,Worker),
+PropagatesAsyncContextToEvents=("open", "error")]
 interface <dfn interface>EventSource</dfn> : <span>EventTarget</span> {
   <span data-x="dom-EventSource">constructor</span>(USVString url, optional <span>EventSourceInit</span> eventSourceInitDict = {});
 
@@ -128690,6 +128755,9 @@ any-char      = %x0000-0009 / %x000B-000C / %x000E-10FFFF
   <p>For web browsers, the appropriate steps to <span>dispatch the event</span> are as follows:</p>
 
   <ol>
+   <li><p><span data-x="map remove">Remove</span> (the <code>EventSource</code> object's
+   <span>preserved AsyncContext map</span>)["<code data-x="event-open">open</code>"].</p></li>
+
    <li><p>Set the <span data-x="concept-event-stream-last-event-id">last event ID string</span> of
    the event source to the value of the <var>last event ID</var> buffer. The buffer does
    not get reset, so the <span data-x="concept-event-stream-last-event-id">last event ID
