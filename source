@@ -3349,6 +3349,7 @@ a.setAttribute('href', 'https://example.com/'); // change the content attribute 
      <li>The <!--en-GB--><dfn id="activation-behaviour" data-x-href="https://dom.spec.whatwg.org/#eventtarget-activation-behavior">activation behavior</dfn> hook</li>
      <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior</dfn> hook</li>
      <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior</dfn> hook</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org#eventtarget-preserved-asynccontext-map">preserved AsyncContext map</dfn> concept for event targets</li>
      <li>The <dfn data-x="creating an event" data-x-href="https://dom.spec.whatwg.org/#concept-event-create">create an event</dfn> algorithm</li>
      <li>The <dfn data-x="concept-event-fire" data-x-href="https://dom.spec.whatwg.org/#concept-event-fire">fire an event</dfn> algorithm</li>
      <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#canceled-flag">canceled flag</dfn></li>
@@ -3422,6 +3423,8 @@ a.setAttribute('href', 'https://example.com/'); // change the content attribute 
      <li><dfn data-x-href="https://dom.spec.whatwg.org/#valid-attribute-local-name">valid attribute local name</dfn></li>
      <li><dfn data-x-href="https://dom.spec.whatwg.org/#valid-element-local-name">valid element local name</dfn></li>
      <li><dfn data-x-href="https://dom.spec.whatwg.org/#is-a-global-custom-element-registry">is a global custom element registry</dfn></li>
+
+     <li>The <dfn data-x="PropagatesAsyncContextToEvents" data-x-href="https://dom.spec.whatwg.org/#extendedattrdef-propagatesasynccontexttoevents"><code>[PropagatesAsyncContextToEvents]</code></dfn> extended attribute</li>
     </ul>
 
     <p>The following features are defined in <cite>UI Events</cite>: <ref>UIEVENTS</ref></p>
@@ -128246,7 +128249,8 @@ source.addEventListener('remove', removeHandler, false);</code></pre>
 
   <h4>The <code>EventSource</code> interface</h4>
 
-  <pre><code class="idl">[Exposed=(Window,Worker)]
+  <pre><code class="idl">[Exposed=(Window,Worker),
+PropagatesAsyncContextToEvents=("open", "error")]
 interface <dfn interface>EventSource</dfn> : <span>EventTarget</span> {
   <span data-x="dom-EventSource">constructor</span>(USVString url, optional <span>EventSourceInit</span> eventSourceInitDict = {});
 
@@ -128781,6 +128785,9 @@ any-char      = %x0000-0009 / %x000B-000C / %x000E-10FFFF
   <p>For web browsers, the appropriate steps to <span>dispatch the event</span> are as follows:</p>
 
   <ol>
+   <li><p><span data-x="map remove">Remove</span> (the <code>EventSource</code> object's
+   <span>preserved AsyncContext map</span>)["<code data-x="event-open">open</code>"].</p></li>
+
    <li><p>Set the <span data-x="concept-event-stream-last-event-id">last event ID string</span> of
    the event source to the value of the <var>last event ID</var> buffer. The buffer does
    not get reset, so the <span data-x="concept-event-stream-last-event-id">last event ID
